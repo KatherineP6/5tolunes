@@ -1,2 +1,7 @@
-console.log("hola mundo")
-console.log("1145466666")
+
+const showMessage = (message)=>{
+  return message;
+}
+
+
+console.log(showMessage('Hola Como esta'))
