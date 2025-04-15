@@ -1,31 +1,29 @@
-//=>{} call bag
-/* const showMessage = (message)=>{
-  return message;
-}
+const express =require('express')
+const app=express()
+const useRouter=require('./routers/userRouters') 
+const morgan = require('morgan')
+const userLogin=require('./middlewares/userLogin')
+const path=require('path')
+app.use(express.json())
 
-
-console.log(showMessage('Hola Como esta'))
-console.log(showMessage('segundo mensaje')) */
-
-
-/* var a =5;
-if(a%2 ==0){
-    console.log("es un numero par")
-}else{
-    console.log("es un numero impar")
-} */
-//recorrer arreglo 
-
-function busquedalineal(arr, elemento) {
-    for (let i = 0; i < arr.length; i++) {  
-        if (arr[i] === elemento) {        
-            return i;  
-        }
+app.get('/',(req,res)=>{
+    const data={
+        "title":"Titulo de la pagina",
+        "message":"Bienvenido a mi sitio web",
+        "showMessage":true,
+        "items":[1,2,3,4,5]
     }
-    return -1;  
-}
+    res.render('index',data)
+})
 
-const arreglo = [10, 2, 3, 8, 4, 9, 7];
-const elementobuscado = 10;  
-const indice = busquedalineal(arreglo, elementobuscado);
-console.log(`El elemento ${elementobuscado} se encuentra en el índice ${indice}`);
+app.use('/users',useRouter)
+app.use(morgan('dev'))
+app.use(userLogin)
+
+app.set('views',path.join(__dirname,'views'))
+app.set('view engine','ejs')
+
+app.listen(3000,() => {
+    console.log('Aplicacion con express ejecutanse en el puerto 3000')
+})
+
