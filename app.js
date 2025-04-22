@@ -4,6 +4,10 @@ const useRouter=require('./routers/userRouters')
 const morgan = require('morgan')
 const userLogin=require('./middlewares/userLogin')
 const path=require('path')
+const connection = require('./database/connection');
+
+
+
 app.use(express.json())
 
 app.get('/',(req,res)=>{
@@ -26,4 +30,5 @@ app.set('view engine','ejs')
 app.listen(3000,() => {
     console.log('Aplicacion con express ejecutanse en el puerto 3000')
 })
+
 

@@ -1,29 +1,52 @@
-exports.getAllUsers=(req,res)=>{
+const UserService=require('../services/userService')
+const userService=new UserService()
 
-    console.log("Accediendo a todos los usuarios")
+exports.getAllUsers=async(req,res)=>{
+    const users=await userService.getall()
+    res.status(200).json(users)
 }
-exports.getUser=(req,res)=> {
-    console.log(req.query.enabled)
-    console.group('Accediendo a usuario con id:' + req.params.id)
+exports.getUser=async(req,res)=> {
+   const id=req.params.id
+
+   const user = await userService.filterById(id)
+
+   if(!user){
+    return res.status(400).json({'message':"usuario no encontrado"})
+   }
+   res.status(200).json(user)
 }
 
-exports.createUser=(req,res) =>{
-    let data=req.body
-    const{nombre,apellido,email,telefono}=data
-    console.log(`nombre: ${nombre} \n apellido: ${apellido}  \n email: ${email} \n telefono: ${telefono}`)
-    //res.send(nombre,apellido,email,telefono)
-    res.send("user:" + req.params.id + "editado")
+exports.createUser=async(req,res) =>{
+   
+    try{
+        let data=req.body
+        await userService.create(data)
+        res.status(201).send('usuario registrado')
+        }catch(error){
+        res.status(500).json({"error":error.message})
+    }
 }
-exports.updateUser=(req,res) =>{
+
+exports.updateUser=async(req,res) =>{
+  
     let data=req.body
-    const{nombre,apellido,email,telefono}=data
-    console.log(`nombre: ${nombre} \n apellido: ${apellido}  \n email: ${email} \n telefono: ${telefono}`)
-    console.log(req.params.id)
-    console.log(`nombre: ${nombre} \n apellido: ${apellido}  \n email: ${email} \n telefono: ${telefono}`)
-    res.send(data)
+    const id=req.params.id
+    const user=await userService.filterById(id)
+    if(!user){
+        return res.status(400).json({'message':"usuario no encontrado"})
+    }
+     
+    await userService.update(id,data)
+    res.status(201).send({'message':"usuario editado"})
+    
 }
-exports.delteUser=(req,res) =>{
-    let data=req.body
-    console.log(req.params.id)
-    res.send("user:" + req.params.id + "eliminado")
+
+exports.delteUser=async(req,res) =>{
+    const id=req.params.id
+    const user=await userService.filterById(id)
+    if(!user){
+        return res.status(400).json({'message':"usuario no encontrado"})
+    }
+    await userService.delete(id)
+    res.status(201).send({'message':"usuario eliminado"})
 }
